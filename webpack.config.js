@@ -6,6 +6,7 @@ var autoprefixer = require('autoprefixer');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var CopyWebpackPlugin = require('copy-webpack-plugin');
+var ngAnnotatePlugin = require('ng-annotate-webpack-plugin');
 
 /**
  * Env
@@ -13,7 +14,7 @@ var CopyWebpackPlugin = require('copy-webpack-plugin');
  */
 var ENV = process.env.npm_lifecycle_event;
 var isTest = ENV === 'test' || ENV === 'test-watch';
-var isProd = ENV === 'build';
+var isProd = ENV === 'build' || 'android' || ENV === 'ios';
 
 module.exports = function makeWebpackConfig() {
   /**
@@ -30,7 +31,7 @@ module.exports = function makeWebpackConfig() {
    * Karma will set this when it's a test build
    */
   config.entry = isTest ? {} : {
-    app: './www/app/app.js'
+    app: './src/app/app.js'
   };
 
   /**
@@ -41,7 +42,7 @@ module.exports = function makeWebpackConfig() {
    */
   config.output = isTest ? {} : {
     // Absolute output directory
-    path: __dirname + '/dist',
+    path: __dirname + '/www',
 
     // Output path from the view of the page
     // Uses webpack-dev-server in development
@@ -168,14 +169,11 @@ module.exports = function makeWebpackConfig() {
 
   // Skip rendering index.html in test mode
   if (!isTest) {
-    // Reference: https://github.com/ampedandwired/html-webpack-plugin
-    // Render index.html
     config.plugins.push(
       new HtmlWebpackPlugin({
-        template: './www/public/index.html',
+        template: './src/index.html',
         inject: 'body'
       }),
-
       // Reference: https://github.com/webpack/extract-text-webpack-plugin
       // Extract css files
       // Disabled when in test mode or not in build mode
@@ -194,6 +192,12 @@ module.exports = function makeWebpackConfig() {
       // Dedupe modules in the output
       new webpack.optimize.DedupePlugin(),
 
+      // Reference: https://github.com/jeffling/ng-annotate-webpack-plugin
+      // Adds and removes AngularJS dependency injection annotations.
+      new ngAnnotatePlugin({
+        add: true
+      }),
+
       // Reference: http://webpack.github.io/docs/list-of-plugins.html#uglifyjsplugin
       // Minify all javascript, switch loaders to minimizing mode
       new webpack.optimize.UglifyJsPlugin(),
@@ -201,7 +205,8 @@ module.exports = function makeWebpackConfig() {
       // Copy assets from the public folder
       // Reference: https://github.com/kevlened/copy-webpack-plugin
       new CopyWebpackPlugin([{
-        from: __dirname + '/www/public'
+        from: __dirname + '/src/assets',
+        to: './assets'
       }])
     )
   }
@@ -212,7 +217,7 @@ module.exports = function makeWebpackConfig() {
    * Reference: http://webpack.github.io/docs/webpack-dev-server.html
    */
   config.devServer = {
-    contentBase: './www/public',
+    contentBase: './src',
     stats: 'minimal'
   };
 
