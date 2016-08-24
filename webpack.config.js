@@ -21,9 +21,9 @@ module.exports = function makeWebpackConfig() {
 
   config.output = isTest ? {} : {
     path: __dirname + '/www',
-    publicPath: isProd ? '/' : 'http://localhost:8080/',
-    filename: isProd ? '[name].[hash].js' : '[name].bundle.js',
-    chunkFilename: isProd ? '[name].[hash].js' : '[name].bundle.js'
+    publicPath: isProd ? '' : 'http://localhost:8080/',
+    filename: isProd ? 'js/[name].[hash].js' : 'js/[name].bundle.js',
+    chunkFilename: isProd ? 'js/[name].[hash].js' : 'js/[name].bundle.js'
   };
 
   if (isTest) {
@@ -42,13 +42,13 @@ module.exports = function makeWebpackConfig() {
       exclude: /node_modules/
     }, {
       test: /\.scss$/,
-      loader: isTest ? 'null' : ExtractTextPlugin.extract('style-loader', 'css-loader?sourceMap!postcss-loader!resolve-url!sass-loader?sourceMap')
+      loader: isTest ? 'null' : ExtractTextPlugin.extract('style-loader', 'css-loader?sourceMap!postcss-loader!resolve-url!sass-loader?sourceMap', { publicPath: '../' })
     }, {
       test: /\.css$/,
-      loader: isTest ? 'null' : ExtractTextPlugin.extract('style-loader', 'css-loader?sourceMap!postcss-loader')
+      loader: isTest ? 'null' : ExtractTextPlugin.extract('style-loader', 'css-loader?sourceMap!postcss-loader', { publicPath: '../' })
     }, {
-      test: /\.(png|jpg|jpeg|gif|svg|woff|woff2|ttf|eot)$/,
-      loader: 'file'
+      test: /\.(svg|woff|woff2|ttf|eot)$/,
+      loader: 'file?name=assets/[name].[hash].[ext]'
     }, {
       test: /\.html$/,
       loader: 'raw'
@@ -77,10 +77,10 @@ module.exports = function makeWebpackConfig() {
   if (!isTest) {
     config.plugins.push(
       new HtmlWebpackPlugin({
-        template: './src/index.html',
+        template: 'src/index.html',
         inject: 'body'
       }),
-      new ExtractTextPlugin('[name].[hash].css', { disable: !isProd })
+      new ExtractTextPlugin('css/[name].[hash].css', { disable: !isProd })
     )
   }
 
@@ -94,13 +94,13 @@ module.exports = function makeWebpackConfig() {
       new webpack.optimize.UglifyJsPlugin(),
       new CopyWebpackPlugin([{
         from: __dirname + '/src/assets',
-        to: './assets'
+        to: 'assets'
       }])
     )
   }
 
   config.devServer = {
-    contentBase: './src',
+    contentBase: 'src',
     stats: 'minimal'
   };
 
