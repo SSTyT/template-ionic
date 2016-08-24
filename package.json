@@ -3,8 +3,8 @@
   "version": "0.0.1",
   "description": "An Ionic+Webpack+ES6+Sass project template",
   "scripts": {
-    "ios": "rimraf www && webpack --bail --progress --profile && ionic run ios",
-    "android": "rimraf www && webpack --bail --progress --profile && ionic run android",
+    "ios": "npm run build && ionic run ios",
+    "android": "npm run build && ionic run android",
     "build": "rimraf www && webpack --bail --progress --profile",
     "server": "webpack-dev-server --history-api-fallback --inline --progress",
     "test": "karma start",
