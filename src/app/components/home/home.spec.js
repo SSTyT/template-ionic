@@ -4,6 +4,7 @@ import HomeComponent from './home.component';
 import HomeTemplate from './home.html';
 
 describe('Home', () => {
+  /*
   let $rootScope, makeController;
 
   beforeEach(window.module(HomeModule.name));
@@ -50,4 +51,5 @@ describe('Home', () => {
         expect(component.controller).to.equal(HomeController);
       });
   });
+  */
 });

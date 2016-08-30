@@ -4,7 +4,7 @@ import AboutComponent from './about.component';
 import AboutTemplate from './about.html';
 
 describe('About', () => {
-  let $rootScope, makeController;
+/*  let $rootScope, makeController;
 
   beforeEach(window.module(AboutModule.name));
   beforeEach(inject((_$rootScope_) => {
@@ -50,4 +50,5 @@ describe('About', () => {
       expect(component.controller).to.equal(AboutController);
     });
   });
+*/
 });
